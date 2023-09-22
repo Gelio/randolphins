@@ -1,14 +1,5 @@
 {
+  "extends": "../../tsconfig.base.json",
   "include": ["src"],
-  "compilerOptions": {
-    "strict": true,
-    "noImplicitAny": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "jsx": "react-jsx",
-    "esModuleInterop": true,
-    "importsNotUsedAsValues": "error",
-    "exactOptionalPropertyTypes": true,
-    "noEmit": true
-  }
+  "references": [{ "path": "../api" }]
 }

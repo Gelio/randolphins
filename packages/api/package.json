@@ -1,0 +1,15 @@
+{
+  "name": "@randolphins/api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "typecheck": "tsc --build"
+  },
+  "keywords": [],
+  "author": "Grzegorz Rozdzialik",
+  "license": "ISC",
+  "peerDependencies": {
+    "zod": "^3.22.2"
+  }
+}
