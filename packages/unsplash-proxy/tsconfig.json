@@ -5,7 +5,8 @@
     "lib": ["es2021"],
     "module": "es2022",
     "moduleResolution": "node",
-    "types": ["@cloudflare/workers-types"]
+    "types": ["@cloudflare/workers-types"],
+    "verbatimModuleSyntax": true
   },
   "references": [{ "path": "../api" }]
 }
