@@ -2,6 +2,7 @@
   "files": [],
   "references": [
     { "path": "./packages/api" },
-    { "path": "./packages/slideshow" }
+    { "path": "./packages/slideshow" },
+    { "path": "./packages/unsplash-proxy" }
   ]
 }

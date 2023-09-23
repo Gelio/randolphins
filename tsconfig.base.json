@@ -6,8 +6,11 @@
     "noUnusedParameters": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,
+    "isolatedModules": true,
     "importsNotUsedAsValues": "error",
     "exactOptionalPropertyTypes": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
     "paths": {
       "@randolphins/*": ["./packages/*"]
     },

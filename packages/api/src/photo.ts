@@ -22,4 +22,6 @@ export const photoSchema = z.object({
   }),
 });
 
+export type UnsplashPhoto = z.infer<typeof photoSchema>;
+
 export const photosSchema = z.array(photoSchema);
