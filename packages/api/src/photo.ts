@@ -6,6 +6,8 @@ import { z } from "zod";
  */
 export const photoSchema = z.object({
   id: z.string(),
+  description: z.string().nullable(),
+
   /**
    * @see https://unsplash.com/documentation#example-image-use
    */
