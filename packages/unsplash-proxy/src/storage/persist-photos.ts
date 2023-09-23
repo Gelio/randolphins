@@ -1,4 +1,4 @@
-import type { UnsplashPhoto } from "@randolphins/api/src/photo";
+import type { UnsplashPhoto } from "@randolphins/api";
 import { serializePhoto } from "./serialization";
 
 export interface PhotoToPersist {

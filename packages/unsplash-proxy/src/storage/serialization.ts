@@ -1,4 +1,4 @@
-import { photoSchema, type UnsplashPhoto } from "@randolphins/api/src/photo";
+import { photoSchema, type UnsplashPhoto } from "@randolphins/api";
 import type { ZodError } from "zod";
 
 export function serializePhoto(photo: UnsplashPhoto): string {

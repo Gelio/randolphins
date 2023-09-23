@@ -1,4 +1,4 @@
-import { type UnsplashPhoto, photosSchema } from "@randolphins/api/src/photo";
+import { type UnsplashPhoto, photosSchema } from "@randolphins/api";
 import { unsplashHeaders } from "./headers";
 
 const unsplashAPIOrigin = "https://api.unsplash.com/";

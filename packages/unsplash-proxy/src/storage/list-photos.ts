@@ -1,4 +1,4 @@
-import type { UnsplashPhoto } from "@randolphins/api/src/photo";
+import type { UnsplashPhoto } from "@randolphins/api";
 import { type DeserializePhotoError, deserializePhoto } from "./serialization";
 
 export async function retrievePhotosToUse({
