@@ -1,5 +1,5 @@
 import type { UnsplashPhoto } from "@randolphins/api/src/photo";
-import { deserializePhoto } from "./serialization";
+import { type DeserializePhotoError, deserializePhoto } from "./serialization";
 
 export async function retrievePhotosToUse({
   database,
@@ -7,16 +7,26 @@ export async function retrievePhotosToUse({
 }: {
   database: D1Database;
   count: number;
-}): Promise<UnsplashPhoto[]> {
-  const photos = await listLeastRecentlyUsedPhotos({ database, count });
+}): Promise<DeserializedPhotosAndErrors> {
+  const deserializedPhotosAndErrors = await listLeastRecentlyUsedPhotos({
+    database,
+    count,
+  });
 
   await updatePhotosUsedDate({
     database,
     photoUsedTimestamp: Date.now(),
-    photoIDsToUpdate: photos.map((photo) => photo.id),
+    photoIDsToUpdate: deserializedPhotosAndErrors.photos.map(
+      (photo) => photo.id,
+    ),
   });
 
-  return photos;
+  return deserializedPhotosAndErrors;
+}
+
+interface DeserializedPhotosAndErrors {
+  photos: UnsplashPhoto[];
+  deserializationErrors: DeserializePhotoError[];
 }
 
 async function listLeastRecentlyUsedPhotos({
@@ -25,7 +35,7 @@ async function listLeastRecentlyUsedPhotos({
 }: {
   database: D1Database;
   count: number;
-}): Promise<UnsplashPhoto[]> {
+}): Promise<DeserializedPhotosAndErrors> {
   const { results } = await database
     .prepare(
       `SELECT json FROM photos
@@ -35,7 +45,24 @@ async function listLeastRecentlyUsedPhotos({
     .bind(count)
     .all<{ json: string }>();
 
-  return results.map((result) => deserializePhoto(result.json));
+  const photos: UnsplashPhoto[] = [];
+  const deserializationErrors: DeserializePhotoError[] = [];
+  for (const result of results) {
+    const deserializationResult = deserializePhoto(result.json);
+    switch (deserializationResult.variant) {
+      case "success":
+        photos.push(deserializationResult.photo);
+        break;
+      case "error":
+        deserializationErrors.push(deserializationResult.cause);
+        break;
+    }
+  }
+
+  return {
+    photos,
+    deserializationErrors,
+  };
 }
 
 function updatePhotosUsedDate({

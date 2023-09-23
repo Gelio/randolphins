@@ -71,9 +71,19 @@ export async function getRandomDolphinPhotosWithFallback({
       photos: photosToReturn,
     };
   } else {
-    console.log("Failed to fetch photos from Unsplash", result.cause);
+    console.error("Failed to fetch photos from Unsplash", result.cause);
 
-    const photos = await retrievePhotosToUse({ database, count: photosCount });
+    const { photos, deserializationErrors } = await retrievePhotosToUse({
+      database,
+      count: photosCount,
+    });
+    if (deserializationErrors.length > 0) {
+      console.error(
+        `Encountered ${deserializationErrors.length} deserialization errors when retrieving photos from the database`,
+        deserializationErrors,
+      );
+    }
+
     if (photos.length === 0) {
       console.log("No photos in the database. Responding with an error");
       return {
