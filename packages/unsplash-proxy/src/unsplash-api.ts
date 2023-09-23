@@ -7,17 +7,22 @@ export type RandomDolphinPhotosReturn =
   | { variant: "success"; photos: UnsplashPhoto[] }
   | {
       variant: "error";
-      cause:
-        | {
-            variant: "could not fetch photos";
-            cause: "API rate limit reached" | "unknown";
-          }
-        | {
-            variant:
-              | "invalid JSON response"
-              | "response body validation failed";
-          };
+      cause: RandomDolphinPhotosFetchingError;
     };
+
+export type RandomDolphinPhotosFetchingError =
+  | {
+      variant: "could not fetch photos";
+      cause: "API rate limit reached" | "unknown";
+    }
+  | {
+      variant: "invalid JSON response" | "response body validation failed";
+    };
+
+/**
+ * @see https://unsplash.com/documentation#get-a-random-photo
+ */
+export const maxPhotosCount = 30;
 
 export async function fetchRandomDolphinPhotos({
   unsplashAccessKey,

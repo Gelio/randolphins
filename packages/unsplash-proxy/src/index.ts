@@ -1,25 +1,24 @@
-/**
- * Welcome to Cloudflare Workers! This is your first worker.
- *
- * - Run `npm run dev` in your terminal to start a development server
- * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
- *
- * Learn more at https://developers.cloudflare.com/workers/
- */
-
-import { fetchRandomDolphinPhotos } from "./unsplash-api";
+import { getRandomDolphinPhotosWithFallback } from "./get-photos";
+import { parseQueryParams } from "./query-params";
 
 export interface Env {
   UNSPLASH_ACCESS_KEY?: string;
+  DB: D1Database;
 }
 
 export default {
-  async fetch(
-    _request: Request,
-    env: Env,
-    _ctx: ExecutionContext,
-  ): Promise<Response> {
+  async fetch(request, env, _ctx): Promise<Response> {
+    const queryParamsResult = parseQueryParams(request.url);
+    if (queryParamsResult.variant === "error") {
+      return Response.json(
+        {
+          errorMessage: "Invalid 'count' query parameter",
+          cause: queryParamsResult.cause.message,
+        },
+        { status: 400 },
+      );
+    }
+
     const { UNSPLASH_ACCESS_KEY } = env;
 
     if (UNSPLASH_ACCESS_KEY === undefined) {
@@ -27,11 +26,11 @@ export default {
       return Response.json({ errorMessage: "Internal error" }, { status: 500 });
     }
 
-    const randomDolphinReturn = await fetchRandomDolphinPhotos({
+    const randomDolphinReturn = await getRandomDolphinPhotosWithFallback({
+      photosCount: queryParamsResult.value.count,
+      database: env.DB,
       unsplashAccessKey: UNSPLASH_ACCESS_KEY,
-      photosCount: 10,
     });
-
     switch (randomDolphinReturn.variant) {
       case "success":
         return Response.json(randomDolphinReturn.photos);
@@ -40,4 +39,4 @@ export default {
         return Response.json(randomDolphinReturn.cause, { status: 500 });
     }
   },
-};
+} satisfies ExportedHandler<Env>;

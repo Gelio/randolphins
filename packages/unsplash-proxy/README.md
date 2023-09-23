@@ -22,7 +22,13 @@ Its primary purpose is to keep the Unsplash API access key a secret.
    npm install
    ```
 
-4. Start the worker locally
+4. Initialize the local D1 database
+
+   ```sh
+   npm run db-init:local
+   ```
+
+5. Start the worker locally
 
    ```sh
    npm start
@@ -33,5 +39,6 @@ Its primary purpose is to keep the Unsplash API access key a secret.
 To deploy to Cloudflare Workers, run
 
 ```sh
+npm run db-init:remote
 npm run deploy
 ```
