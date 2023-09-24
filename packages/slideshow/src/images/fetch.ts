@@ -1,16 +1,18 @@
 import { photosSchema, type UnsplashPhoto } from "@randolphins/api";
 import type { ZodError } from "zod";
 
+export type FetchRandomDolphinUnsplashImagesError =
+  | {
+      type: "REACT_APP_UNSPLASH_PROXY_URL environment variable is not provided";
+    }
+  | { type: "response is not ok"; response: Response }
+  | { type: "JSON deserialization failed"; cause: Error }
+  | { type: "parsing photos failed"; cause: ZodError<UnsplashPhoto[]> };
+
 type FetchRandomDolphinUnsplashImagesResult =
   | {
       variant: "error";
-      cause:
-        | {
-            type: "REACT_APP_UNSPLASH_PROXY_URL environment variable is not provided";
-          }
-        | { type: "response is not ok"; response: Response }
-        | { type: "JSON deserialization failed"; cause: Error }
-        | { type: "parsing photos failed"; cause: ZodError<UnsplashPhoto[]> };
+      cause: FetchRandomDolphinUnsplashImagesError;
     }
   | { variant: "success"; photos: UnsplashPhoto[] };
 
