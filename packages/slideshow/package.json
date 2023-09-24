@@ -11,14 +11,18 @@
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4",
+    "xstate": "^4.38.2",
     "zod": "^3.22.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "xstate:typegen": "xstate typegen 'src/**/*.ts?(x)'",
+    "xstate:typegen:watch": "npm run xstate:typegen -- --watch",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "typecheck": "tsc --build"
+    "typecheck": "tsc --build",
+    "postinstall": "npm run xstate:typegen"
   },
   "eslintConfig": {
     "extends": [
@@ -43,6 +47,7 @@
     "@types/node": "^20.6.3",
     "@types/react": "^18.2.22",
     "@types/react-dom": "^18.2.7",
+    "@xstate/cli": "^0.5.2",
     "typescript": "^4.9.5"
   },
   "nx": {
