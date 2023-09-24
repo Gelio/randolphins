@@ -13,13 +13,15 @@ export async function retrievePhotosToUse({
     count,
   });
 
-  await updatePhotosUsedDate({
-    database,
-    photoUsedTimestamp: Date.now(),
-    photoIDsToUpdate: deserializedPhotosAndErrors.photos.map(
-      (photo) => photo.id,
-    ),
-  });
+  if (deserializedPhotosAndErrors.photos.length > 0) {
+    await updatePhotosUsedDate({
+      database,
+      photoUsedTimestamp: Date.now(),
+      photoIDsToUpdate: deserializedPhotosAndErrors.photos.map(
+        (photo) => photo.id,
+      ),
+    });
+  }
 
   return deserializedPhotosAndErrors;
 }
