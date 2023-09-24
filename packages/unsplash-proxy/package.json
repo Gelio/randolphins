@@ -17,5 +17,19 @@
   "dependencies": {
     "@randolphins/api": "^1.0.0",
     "zod": "^3.22.2"
+  },
+  "nx": {
+    "targets": {
+      "start": {
+        "dependsOn": [
+          "^build"
+        ]
+      },
+      "deploy": {
+        "dependsOn": [
+          "^build"
+        ]
+      }
+    }
   }
 }
