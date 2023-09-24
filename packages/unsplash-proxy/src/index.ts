@@ -15,7 +15,7 @@ export default {
           errorMessage: "Invalid 'count' query parameter",
           cause: queryParamsResult.cause.message,
         },
-        { status: 400 },
+        { status: 400, headers: corsHeaders },
       );
     }
 
@@ -23,7 +23,10 @@ export default {
 
     if (UNSPLASH_ACCESS_KEY === undefined) {
       console.error("UNSPLASH_ACCESS_KEY secret is not provided.");
-      return Response.json({ errorMessage: "Internal error" }, { status: 500 });
+      return Response.json(
+        { errorMessage: "Internal error" },
+        { status: 500, headers: corsHeaders },
+      );
     }
 
     const randomDolphinReturn = await getRandomDolphinPhotosWithFallback({
@@ -33,10 +36,19 @@ export default {
     });
     switch (randomDolphinReturn.variant) {
       case "success":
-        return Response.json(randomDolphinReturn.photos);
+        return Response.json(randomDolphinReturn.photos, {
+          headers: corsHeaders,
+        });
 
       case "error":
-        return Response.json(randomDolphinReturn.cause, { status: 500 });
+        return Response.json(randomDolphinReturn.cause, {
+          status: 500,
+          headers: corsHeaders,
+        });
     }
   },
 } satisfies ExportedHandler<Env>;
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+};
