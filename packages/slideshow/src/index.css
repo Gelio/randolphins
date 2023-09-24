@@ -1,3 +1,24 @@
+:root {
+  --color-bg-1: #ead7d1;
+  --color-bg-2: #dbcdc6;
+  --color-primary: #38405f;
+  --color-text-on-primary: #f6f5f4;
+  --color-text: #111724;
+}
+
 body {
   margin: 0;
+  background-color: var(--color-bg-2);
+  color: var(--color-text);
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 62.5%;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
 }
