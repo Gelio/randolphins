@@ -28,7 +28,13 @@ Its primary purpose is to keep the Unsplash API access key a secret.
    npm run db-init:local
    ```
 
-5. Start the worker locally
+5. Due to [a bug in Nx](https://github.com/nrwl/nx/issues/19312), build the dependency project manually:
+
+   ```sh
+   npm run build -w @randolphins/api
+   ```
+
+6. Start the worker locally
 
    ```sh
    npm start

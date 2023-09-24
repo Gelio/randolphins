@@ -15,6 +15,12 @@ Uses [`unsplash-proxy`](../unsplash-proxy) to fetch the images.
    npm install
    ```
 
+1. Due to [a bug in Nx](https://github.com/nrwl/nx/issues/19312), build the dependency project manually:
+
+   ```sh
+   npm run build -w @randolphins/api
+   ```
+
 1. Start the development server
 
    ```sh
@@ -31,6 +37,12 @@ Uses [`unsplash-proxy`](../unsplash-proxy) to fetch the images.
 
    ```sh
    REACT_APP_UNSPLASH_PROXY_URL=<url of the deployed unsplash-proxy>
+   ```
+
+1. Due to [a bug in Nx](https://github.com/nrwl/nx/issues/19312), build the dependency project manually:
+
+   ```sh
+   npm run build -w @randolphins/api
    ```
 
 1. Build the application
