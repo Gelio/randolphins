@@ -1,5 +1,5 @@
 import type { UnsplashPhoto } from "@randolphins/api";
-import { assign, createMachine } from "xstate";
+import { assign, createMachine, pure, sendParent } from "xstate";
 import {
   fetchRandomDolphinUnsplashImages,
   FetchRandomDolphinUnsplashImagesError,
@@ -17,6 +17,7 @@ const photosToFetchInOneRequest = 8;
 
 export const photoFetcherMachine = createMachine(
   {
+    predictableActionArguments: true,
     tsTypes: {} as import("./photo-fetcher-machine.typegen").Typegen0,
     schema: {
       context: {} as {
@@ -26,61 +27,79 @@ export const photoFetcherMachine = createMachine(
       events: {} as
         | { type: "received photos"; photos: UnsplashPhoto[] }
         | { type: "failure"; error: FetchRandomDolphinUnsplashImagesError }
-        | { type: "photo used"; photoId: UnsplashPhoto["id"] },
+        | {
+            // NOTE: sent by the parent
+            type: "need photo";
+          },
     },
     context: {
       photos: [],
       errorsSinceSuccessfulFetch: [],
     },
-    initial: "fetching",
 
-    on: {
-      "photo used": {
-        actions: "removePhoto",
-      },
-    },
-
+    type: "parallel",
     states: {
       fetching: {
-        invoke: {
-          src: "fetchPhotosActor",
-        },
-        tags: "loading",
-        on: {
-          failure: {
-            target: "backoff",
-            actions: "saveError",
+        initial: "fetching",
+
+        states: {
+          fetching: {
+            invoke: {
+              src: "fetchPhotosActor",
+            },
+            tags: "loading",
+            on: {
+              failure: {
+                target: "backoff",
+                actions: "saveError",
+              },
+              "received photos": {
+                target: "idle",
+                actions: "storePhotos",
+              },
+            },
           },
-          "received photos": {
-            target: "idle",
-            actions: "storePhotos",
+
+          backoff: {
+            tags: "loading",
+            after: {
+              [backoffAfterErrorMs]: {
+                target: "fetching",
+              },
+            },
+          },
+
+          idle: {
+            always: [
+              {
+                cond: "photosLowWaterMarkReached",
+                target: "fetching",
+              },
+            ],
           },
         },
       },
 
-      backoff: {
-        tags: "loading",
-        after: {
-          [backoffAfterErrorMs]: {
-            target: "fetching",
-          },
-        },
-      },
+      providingPhotos: {
+        initial: "idle",
 
-      idle: {
-        always: [
-          {
-            cond: "photosLowWaterMarkReached",
-            target: "fetching",
+        states: {
+          idle: {
+            on: {
+              "need photo": {
+                target: "waiting for photo",
+              },
+            },
           },
-        ],
-        on: {
-          "photo used": {
-            actions: "removePhoto",
 
-            // NOTE: do an internal transition to the "idle" state
-            // to rerun `always` checks
-            target: "idle",
+          "waiting for photo": {
+            always: [
+              {
+                cond: "hasPhotos",
+                actions: "sendPhotoToParent",
+                target: "idle",
+              },
+            ],
           },
         },
       },
@@ -98,28 +117,26 @@ export const photoFetcherMachine = createMachine(
         errorsSinceSuccessfulFetch: [],
         photos: (context, event) => [...context.photos, ...event.photos],
       }),
-      removePhoto: assign({
-        photos: (context, event) => {
-          const usedPhotoIndex = context.photos.findIndex(
-            (photo) => photo.id === event.photoId
-          );
-          if (usedPhotoIndex === -1) {
-            // NOTE: ignore trying to remove a photo that is no longer in the
-            // context
-            return context.photos;
-          }
+      sendPhotoToParent: pure((context) => {
+        const photo = context.photos[0];
 
-          return [
-            ...context.photos.slice(0, usedPhotoIndex),
-            ...context.photos.slice(usedPhotoIndex + 1),
-          ];
-        },
+        return [
+          sendParent({
+            type: "photo",
+            photo,
+          }),
+          assign({
+            photos: ({ photos }) =>
+              removePhotoWithoutMutations(photos, photo.id),
+          }),
+        ];
       }),
     },
 
     guards: {
       photosLowWaterMarkReached: (context) =>
         context.photos.length < photosCacheLowWatermark,
+      hasPhotos: (context) => context.photos.length > 0,
     },
 
     services: {
@@ -161,3 +178,20 @@ export const photoFetcherMachine = createMachine(
     },
   }
 );
+
+function removePhotoWithoutMutations(
+  photos: UnsplashPhoto[],
+  photoId: UnsplashPhoto["id"]
+): UnsplashPhoto[] {
+  const usedPhotoIndex = photos.findIndex((photo) => photo.id === photoId);
+  if (usedPhotoIndex === -1) {
+    // NOTE: ignore trying to remove a photo that is no longer in the
+    // context
+    return photos;
+  }
+
+  return [
+    ...photos.slice(0, usedPhotoIndex),
+    ...photos.slice(usedPhotoIndex + 1),
+  ];
+}
