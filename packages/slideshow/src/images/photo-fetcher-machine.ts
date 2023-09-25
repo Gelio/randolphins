@@ -28,6 +28,10 @@ export const photoFetcherMachine = createMachine(
         | {
             // NOTE: sent by the parent
             type: "need photo";
+          }
+        | {
+            // NOTE: sent by the parent
+            type: "pause";
           },
     },
     context: {
@@ -98,6 +102,12 @@ export const photoFetcherMachine = createMachine(
                 target: "idle",
               },
             ],
+
+            on: {
+              pause: {
+                target: "idle",
+              },
+            },
           },
         },
       },

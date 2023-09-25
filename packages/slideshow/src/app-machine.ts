@@ -22,6 +22,14 @@ export const slideshowMachine = createMachine(
             // NOTE: sent by the photoFetcherMachine
             type: "photo";
             photo: UnsplashPhoto;
+          }
+        | {
+            // NOTE: sent by the consumer
+            type: "pause";
+          }
+        | {
+            // NOTE: sent by the consumer
+            type: "resume";
           },
     },
 
@@ -42,6 +50,15 @@ export const slideshowMachine = createMachine(
             actions: forwardTo((context) => context.photoFetcher),
           },
           photo: {
+            actions: forwardTo((context) => context.forwardSlideshow),
+          },
+          pause: {
+            actions: [
+              forwardTo((context) => context.photoFetcher),
+              forwardTo((context) => context.forwardSlideshow),
+            ],
+          },
+          resume: {
             actions: forwardTo((context) => context.forwardSlideshow),
           },
         },

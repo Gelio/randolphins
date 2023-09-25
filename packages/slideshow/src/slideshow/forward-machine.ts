@@ -16,10 +16,19 @@ export const slideshowForwardMachine = createMachine(
          */
         photoHistory: UnsplashPhoto[];
       },
-      events: {} as {
-        type: "photo";
-        photo: UnsplashPhoto;
-      },
+      events: {} as
+        | {
+            type: "photo";
+            photo: UnsplashPhoto;
+          }
+        | {
+            // NOTE: sent by the parent
+            type: "pause";
+          }
+        | {
+            // NOTE: sent by the parent
+            type: "resume";
+          },
     },
 
     context: {
@@ -44,6 +53,21 @@ export const slideshowForwardMachine = createMachine(
             target: "waiting for photo",
           },
         },
+      },
+
+      paused: {
+        on: {
+          pause: undefined,
+          resume: {
+            target: "idle",
+          },
+        },
+      },
+    },
+
+    on: {
+      pause: {
+        target: "paused",
       },
     },
   },

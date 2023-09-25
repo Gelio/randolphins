@@ -3,7 +3,7 @@ import { slideshowMachine } from "./app-machine";
 import "./App.css";
 
 function App() {
-  const [current /* send */] = useMachine(slideshowMachine);
+  const [current, send] = useMachine(slideshowMachine);
   const forwardSlideshowSnapshot =
     current.context.forwardSlideshow.getSnapshot()!;
   const { photoHistory } = forwardSlideshowSnapshot.context;
@@ -40,13 +40,27 @@ function App() {
     }
   }
 
+  const paused = forwardSlideshowSnapshot.can("resume");
+
   return (
-    <img
-      // TODO: add utm parameters to the URL
-      src={currentPhoto.urls.regular}
-      alt={currentPhoto.description ?? "A photo of a dolphin."}
-      // TODO: add attribution (including utm parameters)
-    />
+    <div>
+      <div>
+        {paused ? (
+          <button onClick={() => send({ type: "resume" })}>Resume</button>
+        ) : (
+          <button onClick={() => send({ type: "pause" })}>Pause</button>
+        )}
+      </div>
+
+      <div>
+        <img
+          // TODO: add utm parameters to the URL
+          src={currentPhoto.urls.regular}
+          alt={currentPhoto.description ?? "A photo of a dolphin."}
+          // TODO: add attribution (including utm parameters)
+        />
+      </div>
+    </div>
   );
 }
 
