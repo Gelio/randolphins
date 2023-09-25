@@ -5,8 +5,6 @@ import {
   FetchRandomDolphinUnsplashImagesError,
 } from "./fetch";
 
-const backoffAfterErrorMs = 2000;
-
 /**
  * When the number of photos in context goes below this number,
  * start fetching more photos.
@@ -63,7 +61,7 @@ export const photoFetcherMachine = createMachine(
           backoff: {
             tags: "loading",
             after: {
-              [backoffAfterErrorMs]: {
+              backoffAfterErrorMs: {
                 target: "fetching",
               },
             },
@@ -137,6 +135,10 @@ export const photoFetcherMachine = createMachine(
       photosLowWaterMarkReached: (context) =>
         context.photos.length < photosCacheLowWatermark,
       hasPhotos: (context) => context.photos.length > 0,
+    },
+
+    delays: {
+      backoffAfterErrorMs: 2000,
     },
 
     services: {
