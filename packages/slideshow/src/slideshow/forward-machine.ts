@@ -1,5 +1,6 @@
 import type { UnsplashPhoto } from "@randolphins/api";
 import { assign, createMachine, sendParent } from "xstate";
+import { defaultPhotoDurationMs } from "./config";
 
 const photoHistoryCapacity = 5;
 
@@ -85,10 +86,7 @@ export const slideshowForwardMachine = createMachine(
       }),
     },
     delays: {
-      /**
-       * How long a single photo is shown for
-       */
-      photoDurationMs: 2_000,
+      photoDurationMs: defaultPhotoDurationMs,
     },
   }
 );
