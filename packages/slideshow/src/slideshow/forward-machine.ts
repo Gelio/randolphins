@@ -20,7 +20,7 @@ export const slideshowForwardMachine = createMachine(
       },
       events: {} as
         | {
-            type: "photo";
+            type: "new photo";
             photo: UnsplashPhoto;
           }
         | {
@@ -62,7 +62,7 @@ export const slideshowForwardMachine = createMachine(
             // https://web.dev/preload-responsive-images/
 
             on: {
-              photo: {
+              "new photo": {
                 target: "showing photo",
                 actions: "savePhoto",
               },

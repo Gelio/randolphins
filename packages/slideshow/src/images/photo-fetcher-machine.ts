@@ -131,7 +131,7 @@ export const photoFetcherMachine = createMachine(
 
         return [
           sendParent({
-            type: "photo",
+            type: "new photo",
             photo,
           }),
           assign({

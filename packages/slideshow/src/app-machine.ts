@@ -29,7 +29,7 @@ export const slideshowMachine = createMachine(
           }
         | {
             // NOTE: sent by the photoFetcherMachine
-            type: "photo";
+            type: "new photo";
             photo: UnsplashPhoto;
           }
         | {
@@ -85,7 +85,7 @@ export const slideshowMachine = createMachine(
           "need photo": {
             actions: forwardTo((context) => context.photoFetcher),
           },
-          photo: {
+          "new photo": {
             actions: forwardTo((context) => context.forwardSlideshow),
           },
           pause: {
