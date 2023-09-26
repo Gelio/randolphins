@@ -1,5 +1,12 @@
 import type { UnsplashPhoto } from "@randolphins/api";
-import { ActorRefFrom, assign, createMachine, sendTo, spawn } from "xstate";
+import {
+  ActorRefFrom,
+  assign,
+  createMachine,
+  pure,
+  sendTo,
+  spawn,
+} from "xstate";
 import { forwardTo } from "xstate/lib/actions";
 import { photoFetcherMachine } from "./images/photo-fetcher-machine";
 import { slideshowForwardMachine, slideshowRewindMachine } from "./slideshow";
@@ -38,12 +45,22 @@ export const slideshowMachine = createMachine(
           },
     },
 
-    entry: assign({
-      // TODO: maybe turn off some `sync`s
-      photoFetcher: () => spawn(photoFetcherMachine, { sync: true }),
-      forwardSlideshow: () => spawn(slideshowForwardMachine, { sync: true }),
-      rewindSlideshow: () => spawn(slideshowRewindMachine, { sync: true }),
-    }),
+    entry: pure((context) =>
+      // NOTE: only initialize the actors once.
+      // `entry` runs on transitions too, which would overwrite the existing actors.
+      context.forwardSlideshow
+        ? undefined
+        : assign({
+            // TODO: maybe turn off some `sync`s
+            photoFetcher: () => spawn(photoFetcherMachine, { sync: true }),
+            forwardSlideshow: () =>
+              spawn(slideshowForwardMachine, {
+                sync: true,
+              }),
+            rewindSlideshow: () =>
+              spawn(slideshowRewindMachine, { sync: true }),
+          })
+    ),
 
     initial: "forward",
 
@@ -118,13 +135,6 @@ export const slideshowMachine = createMachine(
         (context) => context.rewindSlideshow,
         (context) => ({
           type: "start",
-          // WARN: `photosToRewind` end up being an empty array, even when the
-          // actual context of forwardSlideshow has entries in that array.
-          // This seems like a bug in XState, since in App.tsx, the photoHistory
-          // is there correctly, and the problem exists only in this parent slideshowMachine.
-          //
-          // Looks like the parent machine does not have access to the child
-          // machine's latest context.
           photosToRewind:
             context.forwardSlideshow.getSnapshot()!.context.photoHistory,
         })
