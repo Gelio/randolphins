@@ -80,13 +80,9 @@ export const slideshowForwardMachine = createMachine(
           paused: {
             on: {
               pause: undefined,
-              resume: [
-                {
-                  target: "showing photo",
-                  cond: "hasPhotos",
-                },
-                { target: "waiting for new photo" },
-              ],
+              resume: {
+                target: "waiting for new photo",
+              },
             },
           },
         },

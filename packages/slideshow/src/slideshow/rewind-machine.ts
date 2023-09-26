@@ -61,10 +61,11 @@ export const slideshowRewindMachine = createMachine(
               },
             ],
 
+            entry: "popPhoto",
+
             after: {
               photoDurationMs: {
                 target: "rewinding",
-                actions: "popPhoto",
               },
             },
 
