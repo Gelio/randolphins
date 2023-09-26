@@ -24,51 +24,80 @@ export const slideshowForwardMachine = createMachine(
           }
         | {
             // NOTE: sent by the parent
-            type: "pause";
+            type: "pause" | "resume" | "turn off";
           }
         | {
             // NOTE: sent by the parent
-            type: "resume";
+            type: "start";
+            initialPhotoHistory: UnsplashPhoto[];
           },
     },
 
     context: {
       photoHistory: [],
     },
-    initial: "waiting for photo",
+    initial: "turned off",
+
     states: {
-      "waiting for photo": {
-        entry: "askForPhoto",
+      "turned off": {
+        on: {
+          start: {
+            target: "running.waiting for photo",
+            actions: assign({
+              photoHistory: (_context, event) => event.initialPhotoHistory,
+            }),
+          },
+        },
+      },
+
+      running: {
+        states: {
+          "waiting for photo": {
+            entry: "askForPhoto",
+            // TODO: prefetch photos. On slow networks, the new photo does not
+            // have a chance to load before the src is changed to the next one, and
+            // the next one also won't load, so the page is showing the same old
+            // photo constantly.
+            // https://web.dev/preload-responsive-images/
+
+            on: {
+              photo: {
+                target: "idle",
+                actions: "savePhoto",
+              },
+            },
+          },
+
+          idle: {
+            after: {
+              photoDurationMs: {
+                target: "waiting for photo",
+              },
+            },
+          },
+
+          paused: {
+            on: {
+              pause: undefined,
+              resume: [
+                {
+                  target: "idle",
+                  cond: "hasPhotos",
+                },
+                { target: "waiting for photo" },
+              ],
+            },
+          },
+        },
 
         on: {
-          photo: {
-            target: "idle",
-            actions: "savePhoto",
+          pause: {
+            target: ".paused",
+          },
+          "turn off": {
+            target: "turned off",
           },
         },
-      },
-
-      idle: {
-        after: {
-          photoDurationMs: {
-            target: "waiting for photo",
-          },
-        },
-      },
-
-      paused: {
-        on: {
-          pause: undefined,
-          resume: {
-            target: "idle",
-          },
-        },
-      },
-    },
-
-    on: {
-      pause: {
-        target: "paused",
       },
     },
   },
@@ -87,6 +116,9 @@ export const slideshowForwardMachine = createMachine(
     },
     delays: {
       photoDurationMs: defaultPhotoDurationMs,
+    },
+    guards: {
+      hasPhotos: (context) => context.photoHistory.length > 0,
     },
   }
 );
