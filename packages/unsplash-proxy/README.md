@@ -1,8 +1,13 @@
 # Unsplash API proxy
 
-A Cloudflare Worker that proxies requests to Unsplash.
+A [Cloudflare Worker](https://workers.cloudflare.com/) that proxies requests to
+Unsplash.
 
 Its primary purpose is to keep the Unsplash API access key a secret.
+
+The secondary purpose is to cache the images from Unsplash in a
+[D1](https://developers.cloudflare.com/d1/) database, so the application keeps
+working even if requests to Unsplash are rate-limited.
 
 ## Quick start
 
@@ -12,29 +17,30 @@ Its primary purpose is to keep the Unsplash API access key a secret.
    cp .dev.vars.template .dev.vars
    ```
 
-2. Fill in the `UNSPLASH_ACCESS_TOKEN` in `.dev.vars`.
+1. Fill in the `UNSPLASH_ACCESS_TOKEN` in `.dev.vars`.
 
    Generate one at <https://unsplash.com/developers>.
 
-3. Install dependencies
+1. Install dependencies
 
    ```sh
    npm install
    ```
 
-4. Initialize the local D1 database
+1. Initialize the local D1 database
 
    ```sh
    npm run db-init:local
    ```
 
-5. Due to [a bug in Nx](https://github.com/nrwl/nx/issues/19312), build the dependency project manually:
+1. Due to [a bug in Nx](https://github.com/nrwl/nx/issues/19312), build the
+   dependency project manually:
 
    ```sh
    npm run build -w @randolphins/api
    ```
 
-6. Start the worker locally
+1. Start the worker locally
 
    ```sh
    npm start
