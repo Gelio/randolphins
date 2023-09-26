@@ -2,7 +2,7 @@ import { useMachine } from "@xstate/react";
 import { slideshowMachine } from "./app-machine";
 import "./App.css";
 
-function App() {
+export function App() {
   const [current, send] = useMachine(slideshowMachine);
   const forwardSlideshowSnapshot =
     current.context.forwardSlideshow.getSnapshot()!;
@@ -64,4 +64,3 @@ function App() {
   );
 }
 
-export default App;
