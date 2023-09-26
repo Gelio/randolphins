@@ -15,6 +15,8 @@ export function PhotoDescription({
         href={addUnsplashAttributionToURL(
           new URL(photo.user.links.html)
         ).toString()}
+        target="_blank"
+        rel="noreferrer"
       >
         {photo.user.name}
       </a>{" "}
@@ -23,6 +25,8 @@ export function PhotoDescription({
         href={addUnsplashAttributionToURL(
           new URL("https://unsplash.com")
         ).toString()}
+        target="_blank"
+        rel="noreferrer"
       >
         Unsplash
       </a>
