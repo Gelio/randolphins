@@ -6,15 +6,16 @@
   --color-text: #111724;
 }
 
+html {
+  font-size: 62.5%;
+}
+
 body {
   margin: 0;
   background-color: var(--color-bg-2);
   color: var(--color-text);
   box-sizing: border-box;
-}
-
-html {
-  font-size: 62.5%;
+  font-size: 1.6rem;
 }
 
 *,
