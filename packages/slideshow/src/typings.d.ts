@@ -3,6 +3,11 @@ declare module "*.svg" {
   export default fileUrl;
 }
 
+declare module "*.module.css" {
+  const classNames: Record<string, string>;
+  export default classNames;
+}
+
 declare namespace NodeJS {
   interface ProcessEnv {
     REACT_APP_UNSPLASH_PROXY_URL?: string;

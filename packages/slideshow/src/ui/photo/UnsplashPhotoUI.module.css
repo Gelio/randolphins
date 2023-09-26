@@ -1,0 +1,7 @@
+.photo {
+  max-width: 100%;
+  max-height: 600px;
+
+  display: block;
+  margin-inline: auto;
+}

@@ -3,7 +3,9 @@ import { slideshowMachine } from "./app-machine";
 import "./App.css";
 import type { FetchRandomDolphinUnsplashImagesError } from "./images/fetch";
 import { inspect } from "@xstate/inspect";
-import { UnsplashPhotoUI } from "./ui/photo";
+import { PhotoWithDescription } from "./ui/photo";
+import { SlideshowLayout } from "./ui/SlideshowLayout";
+import { Button } from "./ui/Button";
 
 // TODO: debug the warnings about stopped services in the browser console
 
@@ -33,51 +35,54 @@ export function App() {
 
       return (
         <div>
-          <div>
-            <button onClick={() => send({ type: "rewind slideshow" })}>
-              Rewind
-            </button>
-
-            {paused ? (
-              <button onClick={() => send({ type: "resume" })}>Resume</button>
+          <SlideshowLayout
+            modeButton={
+              <Button onClick={() => send({ type: "rewind slideshow" })}>
+                Rewind
+              </Button>
+            }
+            pauseResumeButton={
+              paused ? (
+                <Button onClick={() => send({ type: "resume" })}>Resume</Button>
+              ) : (
+                <Button onClick={() => send({ type: "pause" })}>Pause</Button>
+              )
+            }
+          >
+            {currentPhoto ? (
+              <PhotoWithDescription photo={currentPhoto} />
             ) : (
-              <button onClick={() => send({ type: "pause" })}>Pause</button>
-            )}
-          </div>
+              (() => {
+                if (
+                  !forwardSlideshowSnapshot.matches(
+                    "running.waiting for new photo"
+                  )
+                ) {
+                  return (
+                    <div>
+                      Press <em>Resume</em> to start the slideshow.
+                    </div>
+                  );
+                }
 
-          {currentPhoto ? (
-            <UnsplashPhotoUI photo={currentPhoto} />
-          ) : (
-            (() => {
-              if (
-                !forwardSlideshowSnapshot.matches(
-                  "running.waiting for new photo"
-                )
-              ) {
+                const photoFetcherSnapshot =
+                  current.context.photoFetcher.getSnapshot()!;
+                const { errorsSinceSuccessfulFetch } =
+                  photoFetcherSnapshot.context;
                 return (
                   <div>
-                    Press <em>Resume</em> to start the slideshow.
+                    <div>Loading the photo...</div>
+
+                    {errorsSinceSuccessfulFetch.length > 0 ? (
+                      <ErrorsSinceLastSuccessfulFetch
+                        errorsSinceSuccessfulFetch={errorsSinceSuccessfulFetch}
+                      />
+                    ) : null}
                   </div>
                 );
-              }
-
-              const photoFetcherSnapshot =
-                current.context.photoFetcher.getSnapshot()!;
-              const { errorsSinceSuccessfulFetch } =
-                photoFetcherSnapshot.context;
-              return (
-                <div>
-                  <div>Loading the photo...</div>
-
-                  {errorsSinceSuccessfulFetch.length > 0 ? (
-                    <ErrorsSinceLastSuccessfulFetch
-                      errorsSinceSuccessfulFetch={errorsSinceSuccessfulFetch}
-                    />
-                  ) : null}
-                </div>
-              );
-            })()
-          )}
+              })()
+            )}
+          </SlideshowLayout>
         </div>
       );
     } else {
@@ -96,37 +101,38 @@ export function App() {
       );
     } else if (rewindSlideshowSnapshot.matches("running")) {
       return (
-        <div>
-          <div>
-            <button onClick={() => send({ type: "forward slideshow" })}>
+        <SlideshowLayout
+          modeButton={
+            <Button onClick={() => send({ type: "forward slideshow" })}>
               Forward
-            </button>
-
-            {rewindSlideshowSnapshot.matches("running.paused") ? (
-              <button onClick={() => send({ type: "resume" })}>Resume</button>
+            </Button>
+          }
+          pauseResumeButton={
+            rewindSlideshowSnapshot.matches("running.paused") ? (
+              <Button onClick={() => send({ type: "resume" })}>Resume</Button>
             ) : (
-              <button
+              <Button
                 onClick={() => send({ type: "pause" })}
                 disabled={rewindSlideshowSnapshot.matches(
                   "running.noPhotosLeft"
                 )}
               >
                 Pause
-              </button>
-            )}
-          </div>
-
+              </Button>
+            )
+          }
+        >
           {rewindSlideshowSnapshot.matches("running.noPhotosLeft") ? (
             <div>Cannot remember any more dolphins</div>
           ) : (
-            <UnsplashPhotoUI
+            <PhotoWithDescription
               photo={
                 // TODO: a formal invariant check
                 rewindSlideshowSnapshot.context.photosToRewind.at(-1)!
               }
             />
           )}
-        </div>
+        </SlideshowLayout>
       );
     } else {
       throw new Error(

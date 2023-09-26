@@ -1,1 +1,1 @@
-export { UnsplashPhotoUI } from "./UnsplashPhotoUI";
+export { PhotoWithDescription } from "./PhotoWithDescription";

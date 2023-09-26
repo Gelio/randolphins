@@ -2,6 +2,7 @@
   --color-bg-1: #ead7d1;
   --color-bg-2: #dbcdc6;
   --color-primary: #38405f;
+  --color-primary-lighter: #444e74;
   --color-text-on-primary: #f6f5f4;
   --color-text: #111724;
 }
@@ -22,4 +23,9 @@ body {
 *::after,
 *::before {
   box-sizing: inherit;
+}
+
+a,
+a:visited {
+  color: var(--color-primary);
 }

@@ -1,0 +1,16 @@
+.slideshow-container {
+  margin-inline: 32px;
+}
+
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+
+  margin-block-end: 32px;
+}
+
+.photo-container {
+  margin-inline: auto;
+  max-width: 800px;
+}

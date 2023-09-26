@@ -8,7 +8,7 @@ const unsplashUtmParameters = {
   utm_medium: "referral",
 };
 
-export function addUtmParametersToURL(url: URL): URL {
+export function addUnsplashAttributionToURL(url: URL): URL {
   const newUrl = new URL(url);
 
   for (const [name, value] of Object.entries(unsplashUtmParameters)) {
