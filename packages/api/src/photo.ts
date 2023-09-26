@@ -8,6 +8,11 @@ export const photoSchema = z.object({
   id: z.string(),
   description: z.string().nullable(),
 
+  // NOTE: needed to link back to the photo at Unsplash
+  links: z.object({
+    html: z.string(),
+  }),
+
   /**
    * @see https://unsplash.com/documentation#example-image-use
    */
