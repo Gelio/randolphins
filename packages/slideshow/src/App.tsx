@@ -6,6 +6,7 @@ import { inspect } from "@xstate/inspect";
 import { PhotoWithDescription } from "./ui/photo";
 import { SlideshowLayout } from "./ui/SlideshowLayout";
 import { Button } from "./ui/Button";
+import invariant from "ts-invariant";
 
 // TODO: debug the warnings about stopped services in the browser console
 
@@ -125,12 +126,16 @@ export function App() {
           {rewindSlideshowSnapshot.matches("running.noPhotosLeft") ? (
             <div>Cannot remember any more dolphins</div>
           ) : (
-            <PhotoWithDescription
-              photo={
-                // TODO: a formal invariant check
-                rewindSlideshowSnapshot.context.photosToRewind.at(-1)!
-              }
-            />
+            (() => {
+              const latestPhoto =
+                rewindSlideshowSnapshot.context.photosToRewind.at(-1);
+              invariant(
+                latestPhoto,
+                "There must be a photo when the state is not 'noPhotosLeft'"
+              );
+
+              return <PhotoWithDescription photo={latestPhoto} />;
+            })()
           )}
         </SlideshowLayout>
       );
