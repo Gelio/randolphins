@@ -24,6 +24,9 @@ export const slideshowMachine = createMachine(
       },
       events: {} as
         | {
+            // TODO: extract the types of shared events into a single place
+            // for better type-safety
+
             // NOTE: sent by the slideshowForwardMachine
             type: "need photo";
           }
