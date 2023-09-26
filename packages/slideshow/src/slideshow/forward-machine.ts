@@ -43,7 +43,7 @@ export const slideshowForwardMachine = createMachine(
       "turned off": {
         on: {
           start: {
-            target: "running.waiting for photo",
+            target: "running.waiting for new photo",
             actions: assign({
               photoHistory: (_context, event) => event.initialPhotoHistory,
             }),
@@ -53,7 +53,7 @@ export const slideshowForwardMachine = createMachine(
 
       running: {
         states: {
-          "waiting for photo": {
+          "waiting for new photo": {
             entry: "askForPhoto",
             // TODO: prefetch photos. On slow networks, the new photo does not
             // have a chance to load before the src is changed to the next one, and
@@ -63,16 +63,16 @@ export const slideshowForwardMachine = createMachine(
 
             on: {
               photo: {
-                target: "idle",
+                target: "showing photo",
                 actions: "savePhoto",
               },
             },
           },
 
-          idle: {
+          "showing photo": {
             after: {
               photoDurationMs: {
-                target: "waiting for photo",
+                target: "waiting for new photo",
               },
             },
           },
@@ -82,10 +82,10 @@ export const slideshowForwardMachine = createMachine(
               pause: undefined,
               resume: [
                 {
-                  target: "idle",
+                  target: "showing photo",
                   cond: "hasPhotos",
                 },
-                { target: "waiting for photo" },
+                { target: "waiting for new photo" },
               ],
             },
           },

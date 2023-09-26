@@ -48,7 +48,9 @@ export function App() {
           ) : (
             (() => {
               if (
-                !forwardSlideshowSnapshot.matches("running.waiting for photo")
+                !forwardSlideshowSnapshot.matches(
+                  "running.waiting for new photo"
+                )
               ) {
                 return (
                   <div>
