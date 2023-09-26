@@ -54,3 +54,11 @@ Uses [`unsplash-proxy`](../unsplash-proxy) to fetch the images.
    The built application is in the `./build` directory.
 
 1. Copy the built application to the server so requests are routed to `index.html`.
+
+## Running tests
+
+Run
+
+```sh
+npm run test
+```
