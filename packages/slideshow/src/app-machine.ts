@@ -53,6 +53,9 @@ export const slideshowMachine = createMachine(
         : assign({
             // TODO: maybe turn off some `sync`s
             photoFetcher: () => spawn(photoFetcherMachine, { sync: true }),
+
+            // TODO: have only 1 machine started at a time. Use .withContext to start it.
+            // This may be more idiomatic than having a "turned off" state for them.
             forwardSlideshow: () =>
               spawn(slideshowForwardMachine, {
                 sync: true,

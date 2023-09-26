@@ -5,6 +5,8 @@ import "./App.css";
 import type { FetchRandomDolphinUnsplashImagesError } from "./images/fetch";
 import { inspect } from "@xstate/inspect";
 
+// TODO: debug the warnings about stopped services in the browser console
+
 const debugMachines = false;
 
 if (process.env.NODE_ENV === "development" && debugMachines) {
