@@ -6,6 +6,7 @@ const photoHistoryCapacity = 5;
 
 export const slideshowForwardMachine = createMachine(
   {
+    id: "slideshow forward",
     predictableActionArguments: true,
     tsTypes: {} as import("./forward-machine.typegen").Typegen0,
     schema: {

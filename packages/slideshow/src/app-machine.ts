@@ -6,6 +6,7 @@ import { slideshowForwardMachine, slideshowRewindMachine } from "./slideshow";
 
 export const slideshowMachine = createMachine(
   {
+    id: "slideshow",
     predictableActionArguments: true,
     tsTypes: {} as import("./app-machine.typegen").Typegen0,
     schema: {

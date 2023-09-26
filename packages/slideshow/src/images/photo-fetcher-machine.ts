@@ -15,6 +15,7 @@ const photosToFetchInOneRequest = 8;
 
 export const photoFetcherMachine = createMachine(
   {
+    id: "photo fetcher",
     predictableActionArguments: true,
     tsTypes: {} as import("./photo-fetcher-machine.typegen").Typegen0,
     schema: {

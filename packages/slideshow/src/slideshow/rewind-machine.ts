@@ -12,6 +12,7 @@ type PhotosToRewind = UnsplashPhoto[];
 
 export const slideshowRewindMachine = createMachine(
   {
+    id: "slideshow rewind",
     predictableActionArguments: true,
     tsTypes: {} as import("./rewind-machine.typegen").Typegen0,
     schema: {
