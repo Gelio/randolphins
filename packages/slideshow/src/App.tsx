@@ -3,9 +3,20 @@ import { useMachine } from "@xstate/react";
 import { slideshowMachine } from "./app-machine";
 import "./App.css";
 import type { FetchRandomDolphinUnsplashImagesError } from "./images/fetch";
+import { inspect } from "@xstate/inspect";
+
+const debugMachines = false;
+
+if (process.env.NODE_ENV === "development" && debugMachines) {
+  inspect({
+    iframe: false,
+  });
+}
 
 export function App() {
-  const [current, send] = useMachine(slideshowMachine);
+  const [current, send] = useMachine(slideshowMachine, {
+    devTools: debugMachines,
+  });
 
   if (current.matches("forward")) {
     const forwardSlideshowSnapshot =
