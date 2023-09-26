@@ -1,9 +1,9 @@
-import type { UnsplashPhoto } from "@randolphins/api";
 import { useMachine } from "@xstate/react";
 import { slideshowMachine } from "./app-machine";
 import "./App.css";
 import type { FetchRandomDolphinUnsplashImagesError } from "./images/fetch";
 import { inspect } from "@xstate/inspect";
+import { UnsplashPhotoUI } from "./ui/photo";
 
 // TODO: debug the warnings about stopped services in the browser console
 
@@ -151,19 +151,6 @@ function ErrorsSinceLastSuccessfulFetch({
           <li key={index}>{error.type}</li>
         ))}
       </ul>
-    </div>
-  );
-}
-
-function UnsplashPhotoUI({ photo }: { photo: UnsplashPhoto }) {
-  return (
-    <div>
-      <img
-        // TODO: add utm parameters to the URL
-        src={photo.urls.regular}
-        alt={photo.description ?? "A photo of a dolphin."}
-        // TODO: add attribution (including utm parameters)
-      />
     </div>
   );
 }
