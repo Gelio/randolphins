@@ -119,8 +119,5 @@ export const slideshowForwardMachine = createMachine(
     delays: {
       photoDurationMs: defaultPhotoDurationMs,
     },
-    guards: {
-      hasPhotos: (context) => context.photoHistory.length > 0,
-    },
   }
 );
