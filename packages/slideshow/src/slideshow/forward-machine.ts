@@ -25,7 +25,7 @@ export const slideshowForwardMachine = createMachine(
           }
         | {
             // NOTE: sent by the parent
-            type: "pause" | "resume" | "turn off";
+            type: "pause" | "resume" | "turn off" | "photo loaded";
           }
         | {
             // NOTE: sent by the parent
@@ -55,16 +55,21 @@ export const slideshowForwardMachine = createMachine(
         states: {
           "waiting for new photo": {
             entry: "askForPhoto",
-            // TODO: prefetch photos. On slow networks, the new photo does not
-            // have a chance to load before the src is changed to the next one, and
-            // the next one also won't load, so the page is showing the same old
-            // photo constantly.
+            // TODO: prefetch photos for better UX
             // https://web.dev/preload-responsive-images/
 
             on: {
               "new photo": {
-                target: "showing photo",
+                target: "loading photo",
                 actions: "savePhoto",
+              },
+            },
+          },
+
+          "loading photo": {
+            on: {
+              "photo loaded": {
+                target: "showing photo",
               },
             },
           },

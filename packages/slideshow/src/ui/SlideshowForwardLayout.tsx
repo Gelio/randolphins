@@ -44,7 +44,14 @@ export function SlideshowForwardLayout({
           }
         >
           {currentPhoto ? (
-            <PhotoWithDescription photo={currentPhoto} />
+            <PhotoWithDescription
+              photo={currentPhoto}
+              onLoad={() => {
+                sendEvent({
+                  type: "photo loaded",
+                });
+              }}
+            />
           ) : (
             (() => {
               if (

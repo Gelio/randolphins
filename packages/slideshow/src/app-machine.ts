@@ -37,11 +37,7 @@ export const slideshowMachine = createMachine(
           }
         | {
             // NOTE: sent by the consumer
-            type: "pause";
-          }
-        | {
-            // NOTE: sent by the consumer
-            type: "resume";
+            type: "pause" | "resume" | "photo loaded";
           }
         | {
             type: "forward slideshow" | "rewind slideshow";
@@ -101,6 +97,9 @@ export const slideshowMachine = createMachine(
             ],
           },
           resume: {
+            actions: forwardTo((context) => context.forwardSlideshow),
+          },
+          "photo loaded": {
             actions: forwardTo((context) => context.forwardSlideshow),
           },
         },

@@ -89,6 +89,11 @@ it("runs a slideshow and stores photo history", async () => {
             currentTestPhotoIndex: (context) =>
               (context.currentTestPhotoIndex + 1) % testUnsplashPhotos.length,
           }),
+          // NOTE: assume the photo is loaded immediately.
+          // Testing this is not the main purpose of this test.
+          sendTo((context) => context.forwardSlideshow, {
+            type: "photo loaded",
+          }),
         ],
       },
     },
