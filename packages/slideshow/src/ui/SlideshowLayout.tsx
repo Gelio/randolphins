@@ -13,8 +13,8 @@ export function SlideshowLayout({
   return (
     <div className={classNames["slideshow-container"]}>
       <div className={classNames["buttons-container"]}>
-        {modeButton}
-        {pauseResumeButton}
+        <div className={classNames["left-button"]}>{modeButton}</div>
+        <div className={classNames["right-button"]}>{pauseResumeButton}</div>
       </div>
 
       <div className={classNames["photo-container"]}>{children}</div>

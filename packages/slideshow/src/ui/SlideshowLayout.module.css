@@ -3,11 +3,26 @@
 }
 
 .buttons-container {
-  display: flex;
-  justify-content: center;
+  --max-button-width: 100px;
+
+  display: grid;
+  grid-template-columns: 1fr repeat(2, var(--max-button-width)) 1fr;
   gap: 16px;
 
   margin-block-end: 32px;
+
+  .left-button,
+  .right-button {
+    text-align: center;
+  }
+
+  .left-button {
+    grid-column: 2;
+  }
+
+  .right-button {
+    grid-column: 3;
+  }
 }
 
 .photo-container {
